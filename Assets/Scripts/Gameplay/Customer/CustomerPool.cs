@@ -1,63 +1,68 @@
-using UnityEngine;
+using Gameplay.RestroResources.QueueSystem;
+using Gameplay.RestroResources.TableSystem;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Gameplay.Customer
 {
     public class CustomerPool : MonoBehaviour
     {
+
         [Header("Pool Settings")]
-        public GameObject customerPrefab;   // The customer prefab
-        public int poolSize = 50;           // Initial pool size
+        public GameObject customerPrefab;
+        public int initialPoolSize = 10;
 
-        private List<GameObject> _pool;
+        private Queue<GameObject> pool = new Queue<GameObject>();
 
-        void Awake()
+        public QueueManager queueManager;
+
+        public TableManager tableManager;
+
+        public event System.Action InvokeThisOnOrderingCompletedAndGointToTable;
+
+        private void Awake()
+        {            
+            InstantiateThePoolOfCustomers();
+        }
+
+        void InstantiateThePoolOfCustomers()
         {
-            // Initialize the pool
-            _pool = new List<GameObject>();
-
-            for (int i = 0; i < poolSize; i++)
+            // Initialize pool
+            for (int i = 0; i < initialPoolSize; i++)
             {
-                GameObject obj = Instantiate(customerPrefab, transform);
-                obj.SetActive(false);
-                _pool.Add(obj);
+                GameObject customer = Instantiate(customerPrefab, transform);
+                customer.name = "Customer_" + (i + 1);  // Sequential naming
+                customer.SetActive(false);
+                pool.Enqueue(customer);
             }
         }
 
-        // Get an inactive customer from the pool
-        public GameObject GetCustomer()
+        public Customer GetANewCustomer()
         {
-            foreach (var obj in _pool)
+            if (pool.Count == 0)
             {
-                if (!obj.activeInHierarchy)
-                {
-                    obj.SetActive(true);
-                    return obj;
-                }
+                Debug.LogWarning("Pool is empty! Consider increasing initialPoolSize or handling this case.");
+                return null;
             }
 
-            // No inactive customer found
-            Debug.Log("No more customers available in the pool!");
-            return null;
-        }
-        //public void UpdateCustomerPosition()
-        //{
-        //    foreach (var obj in pool)
-        //    {
-        //        if (obj.activeInHierarchy)
-        //        {
-        //            obj
-        //        }
-        //    }
-        //}
+            GameObject customerGO = pool.Dequeue();
+            customerGO.SetActive(true);
 
-        public void ResetPool()
-        {
-            foreach (var obj in _pool)
-            {
-                obj.SetActive(false);
-                obj.transform.localPosition = Vector3.zero;
-            }
+            // Assuming your Customer script is attached to the GameObject
+            Customer customerComponent = customerGO.GetComponent<Customer>();
+            return customerComponent;
         }
+
+        public void ReturnCustomerToPool(GameObject customer)
+        {
+            customer.SetActive(false);
+            pool.Enqueue(customer);
+        }
+
+        public void CustomerOrderCompletedAndGoingToTable()
+        {
+            InvokeThisOnOrderingCompletedAndGointToTable?.Invoke();
+        }
+
     }
 }

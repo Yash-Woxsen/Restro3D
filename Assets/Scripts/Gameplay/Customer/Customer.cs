@@ -1,80 +1,111 @@
+using System;
 using UnityEngine;
-using System.Collections;
+using Gameplay.RestroResources.QueueSystem;
+using Gameplay.RestroResources.QueueSystem.QueueOperations;
+using Gameplay.RestroResources.TableSystem;
 
 namespace Gameplay.Customer
 {
     public class Customer : MonoBehaviour
-    {
-        public QueueSlot assignedSlot;
+    {        
+        QueueSlot _currentQueueSlot,_behindQueueSlot,_aheadQueueSlot;
+
+        public CustomerPool customerPool;
+
+        Table _table;
+
+        public event Action InvokeThisOnReachingTheQueuePosition;
+        //========================================================================================================
         private void OnEnable()
         {
-            assignedSlot = QueueManager.instance.GetAvailableSlot();
-            StartCoroutine(JoinQueue(assignedSlot.transform, 3f));
-        }
-        private IEnumerator JoinQueue(Transform slot, float speed)
-        {
-            assignedSlot.isOccupied = true;
-            while (Vector3.Distance(transform.position, slot.position) > 0.01f)
-            {
-                transform.position = Vector3.MoveTowards(
-                    transform.position,
-                    slot.position,
-                    speed * Time.deltaTime
-                );
-                yield return null; // wait until next frame
-            }
-
-            // Snap exactly to slot
-            transform.position = slot.position;
-            Debug.Log("Reached queue slot!");
-        
-        }
-        public void MoveFwdToCounter()
-        {
-            if(reachedCounter)
-            {
-                BuyFood();
-            }
-            else
-            {
-                //move towards counter
-            }
+            customerPool = GetComponentInParent<CustomerPool>();
+            var joinQueue = GetComponent<JoinQueue>();
+            if (joinQueue == null){return;}
+            
+            joinQueue.CheckAndGetLastSlotOfQueueAndJoinTheQueue();
+            
+            
+            InvokeThisOnReachingTheQueuePosition += SetAheadQueueSlot;
+            InvokeThisOnReachingTheQueuePosition += SetBehindQueueSlot;
         }
 
-        bool reachedCounter = false;
-        private void OnTriggerEnter(Collider other)
-        {
-            if(other.CompareTag("FoodCounter"))
-            {
-                reachedCounter = true;
-            }
-        }
-    
-        public void BuyFood()
-        {
-            // Buy food from counter and pay for it
-        }
-        public void CheckForVacantTable()
-        {
-            // Check for vacant table and move to it
-        }
-        public void SitAtTableAndEat()
-        {
-            //sit at table and eat food
-        }
-        public void PayTipAndRate()
-        {
-            // Pay tip and rate the service
-        }
-        public void ExitRestaurant()
-        {
-            //move towards exit
-            gameObject.SetActive(false);
-            transform.localPosition = Vector3.zero;
-        }
         private void OnDisable()
         {
-            assignedSlot.isOccupied = false;
+            InvokeThisOnReachingTheQueuePosition -= SetAheadQueueSlot;
+            InvokeThisOnReachingTheQueuePosition -= SetBehindQueueSlot;
+        }
+        //======================================================================================================
+
+        public QueueSlot GetCurrentQueueSlot(){return _currentQueueSlot;}
+        public QueueSlot GetBehindQueueSlot() { return _behindQueueSlot; }
+        public QueueSlot GetAheadQueueSlot() { return _aheadQueueSlot; }
+
+        public void SetCurrentQueueSlot(QueueSlot queueSlot)
+        {
+            _currentQueueSlot = queueSlot; 
+            if(queueSlot != null)_currentQueueSlot.ReserveTheSlot();
+            
+            //Assign This after Reaching The Slot Position in Ienumerator by Invoking Event
+            _aheadQueueSlot = null;
+            _behindQueueSlot = null;
+        }
+        void SetBehindQueueSlot()
+        {
+            var queueManager = customerPool.queueManager;
+
+            if (_currentQueueSlot == null || queueManager == null || queueManager.queueSlots == null)
+            {
+                _behindQueueSlot = null;
+                return;
+            }
+
+            int currentIndex = Array.IndexOf(queueManager.queueSlots, _currentQueueSlot);
+
+            // If current slot is the last one, there is no slot behind
+            if (currentIndex == -1 || currentIndex + 1 >= queueManager.queueSlots.Length)
+            {
+                _behindQueueSlot = null;
+                return;
+            }
+
+            _behindQueueSlot = queueManager.queueSlots[currentIndex + 1];
+        }
+        
+        void SetAheadQueueSlot()
+        {
+            var queueManager = customerPool.queueManager;
+
+            if (_currentQueueSlot == null || queueManager == null || queueManager.queueSlots == null)
+            {
+                _aheadQueueSlot = null;
+                return;
+            }
+
+            int currentIndex = Array.IndexOf(queueManager.queueSlots, _currentQueueSlot);
+
+            // If current slot is the first one, there is no slot ahead
+            if (currentIndex == -1 || currentIndex == 0)
+            {
+                _aheadQueueSlot = null;
+                return;
+            }
+
+            // Safe assignment: slot before currentIndex
+            _aheadQueueSlot = queueManager.queueSlots[currentIndex - 1];
+        }
+
+        public Table GetTable()
+        {
+            return _table;
+        }
+        public void SetTable(Table table)
+        {
+            _table = table;
+        }
+
+        public void InvokeFunctionToInvokeThisOnReachingTheQueuePosition()
+        {
+            InvokeThisOnReachingTheQueuePosition?.Invoke();
         }
     }
 }
