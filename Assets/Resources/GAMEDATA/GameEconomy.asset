@@ -10,11 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e6f7724e261336446ba8be9e0944d741, type: 3}
-  m_Name: Game Economy
+  m_Name: GameEconomy
   m_EditorClassIdentifier: Assembly-CSharp::EconomySO
-  MainMoney: 0
-  rentOfrestaurant: 0
+  mainMoney: 102225
+  rentOfRestaurant: 0
   electricityAndMiscExpenses: 0
   costOfEachNewCounter: 0
   costOfEachNewTable: 0
   costOfEachNewFoodMachine: 0
+  salaryOfEachServent: 0
+  bonusMultiplierFOrServents: 0

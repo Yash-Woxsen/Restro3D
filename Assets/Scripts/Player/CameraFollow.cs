@@ -13,8 +13,8 @@ namespace Player
         private PlayerInputs _inputRef;
 
         // Slider-driven zoom factor (0 = default, 1 = zoomed)
-        [Range(0f, 1f)] 
-        public float zoomLevel = 0f;  
+        [Range(0f, 1f)]
+        public float zoomLevel = 0f;
 
         void Awake()
         {

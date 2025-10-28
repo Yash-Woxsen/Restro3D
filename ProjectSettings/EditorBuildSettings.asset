@@ -6,7 +6,7 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Mcd/scene/Restaurant_Simulation.unity
+    path: Assets/Scenes/Restaurant_Simulation/Restaurant_Simulation.unity
     guid: 56197dd61616c294095876467a9d00e0
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}

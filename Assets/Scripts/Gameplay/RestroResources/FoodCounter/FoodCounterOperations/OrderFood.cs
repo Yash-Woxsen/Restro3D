@@ -1,7 +1,5 @@
-using UnityEngine;
-using Gameplay.Customer;
-using System.Collections;
 using System;
+using UnityEngine;
 
 namespace Gameplay.RestroResources.FoodCounter.FoodCounterOperations
 {
@@ -20,7 +18,7 @@ namespace Gameplay.RestroResources.FoodCounter.FoodCounterOperations
 
         private void OnTriggerEnter(Collider other)
         {
-            if(other.CompareTag("FoodCounter"))
+            if (other.CompareTag("FoodCounter"))
             {
                 _foodCounter = other.GetComponent<FoodCounter>();
                 _foodCounter.OnOrderProcessed += OrderTakenSuccessfully;

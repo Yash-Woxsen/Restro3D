@@ -42,7 +42,7 @@ namespace Gameplay.RestroResources.TableSystem.TableOperations
 
 
             _vacantTable = _customer.customerPool.tableManager.GetVacantTable();
-            if(_vacantTable == null)
+            if (_vacantTable == null)
             {
                 return;
             }

@@ -1,16 +1,15 @@
-using UnityEngine;
 using System.Collections;
-using Gameplay.RestroResources.QueueSystem;
+using UnityEngine;
 
 namespace Gameplay.RestroResources.QueueSystem.QueueOperations
 {
     public class MoveCustomerInQueue : MonoBehaviour
     {
         Gameplay.Customer.Customer _customer;
-        
+
         private void OnEnable()
         {
-            _customer  = GetComponent<Gameplay.Customer.Customer>();
+            _customer = GetComponent<Gameplay.Customer.Customer>();
             _customer.InvokeThisOnReachingTheQueuePosition += CheckAndMoveToNextSlot;
         }
 
@@ -18,11 +17,11 @@ namespace Gameplay.RestroResources.QueueSystem.QueueOperations
         {
             if (_customer.GetAheadQueueSlot() != null && _customer.GetAheadQueueSlot().CheckSlotStatus())
             {
-                StartCoroutine(MoveCustomer(_customer.GetCurrentQueueSlot(), _customer.GetAheadQueueSlot(),1));
-                
+                StartCoroutine(MoveCustomer(_customer.GetCurrentQueueSlot(), _customer.GetAheadQueueSlot(), 1));
+
                 //Info Behind customer
             }
-            
+
             else
             {
                 _customer.InvokeThisOnReachingTheQueuePosition -= CheckAndMoveToNextSlot;
@@ -33,7 +32,7 @@ namespace Gameplay.RestroResources.QueueSystem.QueueOperations
         {
             _customer.GetCurrentQueueSlot().VacateTheSlot();
             _customer.SetCurrentQueueSlot(aheadSlot);
-            
+
             float elapsed = 0f;
 
             while (elapsed < duration)
@@ -47,7 +46,7 @@ namespace Gameplay.RestroResources.QueueSystem.QueueOperations
 
             // Snap exactly to the target position
             transform.position = aheadSlot.transform.position;
-            
+
             _customer.InvokeFunctionToInvokeThisOnReachingTheQueuePosition();
         }
     }

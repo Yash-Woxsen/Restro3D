@@ -1,14 +1,12 @@
 using System;
-using UnityEngine;
 using System.Collections;
-using Gameplay.RestroResources.QueueSystem;
-using Gameplay.Customer;
+using UnityEngine;
 
 namespace Gameplay.RestroResources.QueueSystem.QueueOperations
 {
     public class JoinQueue : MonoBehaviour
     {
-        
+
         Gameplay.Customer.Customer _customer;
         public float timeTakenToJoinQueue;
 
@@ -16,7 +14,7 @@ namespace Gameplay.RestroResources.QueueSystem.QueueOperations
 
         public void CheckAndGetLastSlotOfQueueAndJoinTheQueue()
         {
-            _customer  = gameObject.GetComponent<Gameplay.Customer.Customer>();
+            _customer = gameObject.GetComponent<Gameplay.Customer.Customer>();
             var lastQueueSlot = _customer.customerPool.queueManager.queueSlots[_customer.customerPool.queueManager.queueSlots.Length - 1].CheckSlotStatus();
             if (lastQueueSlot)
             {
@@ -28,7 +26,7 @@ namespace Gameplay.RestroResources.QueueSystem.QueueOperations
                 _customer = null;
             }
         }
-        
+
 
         private IEnumerator JustJoinQueue(QueueSlot targetSlot, float duration)
         {
@@ -54,7 +52,7 @@ namespace Gameplay.RestroResources.QueueSystem.QueueOperations
 
             // Snap exactly to the target position
             transform.position = endPos;
-            
+
             OnJoiningTheQueue?.Invoke();
             _customer.InvokeFunctionToInvokeThisOnReachingTheQueuePosition();
         }

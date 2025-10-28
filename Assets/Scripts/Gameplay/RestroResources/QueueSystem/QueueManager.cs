@@ -1,6 +1,4 @@
-using System;
 using UnityEngine;
-using System.Collections.Generic;
 
 namespace Gameplay.RestroResources.QueueSystem
 {
@@ -10,7 +8,7 @@ namespace Gameplay.RestroResources.QueueSystem
 
         private void Start()
         {
-           queueSlots = GetComponentsInChildren<QueueSlot>();
+            queueSlots = GetComponentsInChildren<QueueSlot>();
         }
 
     }

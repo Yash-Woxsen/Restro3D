@@ -1,4 +1,3 @@
-using Gameplay.RestroResources.QueueSystem;
 using UnityEngine;
 
 namespace Gameplay.RestroResources.TableSystem

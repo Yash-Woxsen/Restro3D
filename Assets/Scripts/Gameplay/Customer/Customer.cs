@@ -1,14 +1,14 @@
-using System;
-using UnityEngine;
 using Gameplay.RestroResources.QueueSystem;
 using Gameplay.RestroResources.QueueSystem.QueueOperations;
 using Gameplay.RestroResources.TableSystem;
+using System;
+using UnityEngine;
 
 namespace Gameplay.Customer
 {
     public class Customer : MonoBehaviour
-    {        
-        QueueSlot _currentQueueSlot,_behindQueueSlot,_aheadQueueSlot;
+    {
+        QueueSlot _currentQueueSlot, _behindQueueSlot, _aheadQueueSlot;
 
         public CustomerPool customerPool;
 
@@ -20,11 +20,11 @@ namespace Gameplay.Customer
         {
             customerPool = GetComponentInParent<CustomerPool>();
             var joinQueue = GetComponent<JoinQueue>();
-            if (joinQueue == null){return;}
-            
+            if (joinQueue == null) { return; }
+
             joinQueue.CheckAndGetLastSlotOfQueueAndJoinTheQueue();
-            
-            
+
+
             InvokeThisOnReachingTheQueuePosition += SetAheadQueueSlot;
             InvokeThisOnReachingTheQueuePosition += SetBehindQueueSlot;
         }
@@ -36,15 +36,15 @@ namespace Gameplay.Customer
         }
         //======================================================================================================
 
-        public QueueSlot GetCurrentQueueSlot(){return _currentQueueSlot;}
+        public QueueSlot GetCurrentQueueSlot() { return _currentQueueSlot; }
         public QueueSlot GetBehindQueueSlot() { return _behindQueueSlot; }
         public QueueSlot GetAheadQueueSlot() { return _aheadQueueSlot; }
 
         public void SetCurrentQueueSlot(QueueSlot queueSlot)
         {
-            _currentQueueSlot = queueSlot; 
-            if(queueSlot != null)_currentQueueSlot.ReserveTheSlot();
-            
+            _currentQueueSlot = queueSlot;
+            if (queueSlot != null) _currentQueueSlot.ReserveTheSlot();
+
             //Assign This after Reaching The Slot Position in Ienumerator by Invoking Event
             _aheadQueueSlot = null;
             _behindQueueSlot = null;
@@ -70,7 +70,7 @@ namespace Gameplay.Customer
 
             _behindQueueSlot = queueManager.queueSlots[currentIndex + 1];
         }
-        
+
         void SetAheadQueueSlot()
         {
             var queueManager = customerPool.queueManager;

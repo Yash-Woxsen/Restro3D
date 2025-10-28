@@ -21,7 +21,7 @@ namespace Gameplay.Customer
         public event System.Action InvokeThisOnOrderingCompletedAndGointToTable;
 
         private void Awake()
-        {            
+        {
             InstantiateThePoolOfCustomers();
         }
 

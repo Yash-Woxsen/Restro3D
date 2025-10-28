@@ -1,4 +1,3 @@
-using Gameplay.RestroResources.TableSystem;
 using Gameplay.RestroResources.TableSystem.TableOperations;
 using System.Collections;
 using UnityEngine;
