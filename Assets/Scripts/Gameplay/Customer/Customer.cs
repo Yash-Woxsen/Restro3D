@@ -8,6 +8,7 @@ namespace Gameplay.Customer
 {
     public class Customer : MonoBehaviour
     {
+        public GameObject randomCustomerMesh;
         QueueSlot _currentQueueSlot, _behindQueueSlot, _aheadQueueSlot;
 
         public CustomerPool customerPool;
@@ -18,6 +19,8 @@ namespace Gameplay.Customer
         //========================================================================================================
         private void OnEnable()
         {
+            randomCustomerMesh.SetActive(true);
+
             customerPool = GetComponentInParent<CustomerPool>();
             var joinQueue = GetComponent<JoinQueue>();
             if (joinQueue == null) { return; }
@@ -31,6 +34,7 @@ namespace Gameplay.Customer
 
         private void OnDisable()
         {
+            randomCustomerMesh.SetActive(false);
             InvokeThisOnReachingTheQueuePosition -= SetAheadQueueSlot;
             InvokeThisOnReachingTheQueuePosition -= SetBehindQueueSlot;
         }

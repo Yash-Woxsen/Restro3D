@@ -12,11 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6f7724e261336446ba8be9e0944d741, type: 3}
   m_Name: GameEconomy
   m_EditorClassIdentifier: Assembly-CSharp::EconomySO
-  mainMoney: 102225
-  rentOfRestaurant: 0
-  electricityAndMiscExpenses: 0
-  costOfEachNewCounter: 0
-  costOfEachNewTable: 0
-  costOfEachNewFoodMachine: 0
-  salaryOfEachServent: 0
-  bonusMultiplierFOrServents: 0
+  mainMoney: 500
+  depositAmount: 5000
+  rentPerMonth: 1500
+  salaryPerEmployee: 800
+  salaryOfStoreManager: 1500
+  costOfOneBurger: 3
+  tipAmountPerCustomer: 1
+  costOfBasicTable: 250
+  firstUpgradeCostOfTable: 500
+  secondUpgradeCostOfTable: 750

@@ -28,7 +28,7 @@ namespace Gameplay.RestroResources.QueueSystem.QueueOperations
                 _customer = null;
             }
         }
-        IEnumerator MoveCustomer(QueueSlot currentSlot, QueueSlot aheadSlot, float duration)
+        private IEnumerator MoveCustomer(QueueSlot currentSlot, QueueSlot aheadSlot, float duration)
         {
             _customer.GetCurrentQueueSlot().VacateTheSlot();
             _customer.SetCurrentQueueSlot(aheadSlot);
@@ -37,17 +37,31 @@ namespace Gameplay.RestroResources.QueueSystem.QueueOperations
 
             while (elapsed < duration)
             {
-                // Interpolate position based on elapsed time
-                transform.position = Vector3.Lerp(currentSlot.transform.position, aheadSlot.transform.position, elapsed / duration);
+                float t = elapsed / duration;
+
+                // Move smoothly between slots
+                transform.position = Vector3.Lerp(currentSlot.transform.position, aheadSlot.transform.position, t);
+
+                // Face the direction of movement
+                Vector3 direction = (aheadSlot.transform.position - transform.position).normalized;
+                if (direction.sqrMagnitude > 0.001f)
+                {
+                    Quaternion targetRotation = Quaternion.LookRotation(direction, Vector3.up);
+                    transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 5f);
+                }
 
                 elapsed += Time.deltaTime;
-                yield return null; // wait for next frame
+                yield return null;
             }
 
-            // Snap exactly to the target position
+            // Snap exactly to final position and rotation
             transform.position = aheadSlot.transform.position;
+            Vector3 finalDir = (aheadSlot.transform.position - currentSlot.transform.position).normalized;
+            if (finalDir.sqrMagnitude > 0.001f)
+                transform.rotation = Quaternion.LookRotation(finalDir, Vector3.up);
 
             _customer.InvokeFunctionToInvokeThisOnReachingTheQueuePosition();
         }
+
     }
 }

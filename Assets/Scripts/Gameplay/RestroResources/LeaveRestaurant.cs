@@ -26,19 +26,27 @@ namespace Gameplay.RestroResources
             _customer.SetTable(null);
         }
 
-        IEnumerator WalkOut(float speed = 2f)
+        private IEnumerator WalkOut(float speed = 2f)
         {
             ClearTable();
             Vector3 targetLocalPos = Vector3.zero;
 
             while (Vector3.Distance(transform.localPosition, targetLocalPos) > 0.01f)
             {
+                // Face toward the target
+                Vector3 direction = (targetLocalPos - transform.localPosition).normalized;
+                if (direction.sqrMagnitude > 0.001f)
+                    transform.localRotation = Quaternion.LookRotation(direction, Vector3.up);
+
+                // Move toward the target
                 transform.localPosition = Vector3.MoveTowards(transform.localPosition, targetLocalPos, speed * Time.deltaTime);
+
                 yield return null;
             }
 
             transform.localPosition = targetLocalPos;
             OnCustomerOpsFinished?.Invoke();
         }
+
     }
 }

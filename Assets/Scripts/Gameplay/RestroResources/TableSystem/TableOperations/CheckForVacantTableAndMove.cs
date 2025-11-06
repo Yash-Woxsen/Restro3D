@@ -1,4 +1,4 @@
-using Gameplay.RestroResources.FoodCounter.FoodCounterOperations;
+﻿using Gameplay.RestroResources.FoodCounter.FoodCounterOperations;
 using System;
 using System.Collections;
 using UnityEngine;
@@ -53,33 +53,49 @@ namespace Gameplay.RestroResources.TableSystem.TableOperations
             StartCoroutine(MoveCustomerToTable(_vacantTable, timeTakenToReachTheTable));
         }
 
-        IEnumerator MoveCustomerToTable(Table vacantTable, float duration)
+        private IEnumerator MoveCustomerToTable(Table vacantTable, float duration)
         {
             _customer.GetCurrentQueueSlot()?.VacateTheSlot();
             _customer.SetCurrentQueueSlot(null);
 
             isCheckedForVacantTableAfterOrdering = false;
 
-            //Tell customer behind to come ahead and order food due to high waiting time because table was not available
+            // Tell the customer behind to move ahead and order
             _customer.customerPool.CustomerOrderCompletedAndGoingToTable();
 
-            Vector3 startPos = transform.position;  // Store start once
+            Vector3 startPos = transform.position;
             Vector3 endPos = vacantTable.transform.position;
             float elapsed = 0f;
 
             while (elapsed < duration)
             {
-                float t = elapsed / duration;  // normalized time 0 -> 1
+                float t = elapsed / duration;
+
+                // Move smoothly
                 transform.position = Vector3.Lerp(startPos, endPos, t);
+
+                // Face toward the target while walking
+                Vector3 direction = (endPos - transform.position).normalized;
+                if (direction.sqrMagnitude > 0.001f)
+                {
+                    Quaternion targetRotation = Quaternion.LookRotation(direction, Vector3.up);
+                    transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 5f);
+                }
 
                 elapsed += Time.deltaTime;
                 yield return null;
             }
 
-            transform.position = endPos;  // Snap exactly to the end position
+            // Snap exactly to final position
+            transform.position = endPos;
+
+            // ✅ Face opposite to table's forward direction
+            Quaternion oppositeToTable = Quaternion.LookRotation(-vacantTable.transform.forward, Vector3.up);
+            transform.rotation = Quaternion.Slerp(transform.rotation, oppositeToTable, 1f);
 
             OnCustomerSeated?.Invoke();
         }
+
 
     }
 }

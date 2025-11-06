@@ -40,18 +40,29 @@ namespace Gameplay.RestroResources.QueueSystem.QueueOperations
 
             while (elapsed < duration)
             {
-                // Calculate normalized progress (0 to 1)
                 float t = elapsed / duration;
 
-                // Smoothly interpolate position
+                // Smooth position movement
                 transform.position = Vector3.Lerp(startPos, endPos, t);
 
+                // Face toward the target
+                Vector3 direction = (endPos - transform.position).normalized;
+                if (direction.sqrMagnitude > 0.001f)
+                {
+                    Quaternion targetRotation = Quaternion.LookRotation(direction, Vector3.up);
+                    transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 5f);
+                }
+
                 elapsed += Time.deltaTime;
-                yield return null; // wait for next frame
+                yield return null;
             }
 
-            // Snap exactly to the target position
+            // Snap exactly to the final position & rotation
             transform.position = endPos;
+
+            Vector3 finalDir = (endPos - startPos).normalized;
+            if (finalDir.sqrMagnitude > 0.001f)
+                transform.rotation = Quaternion.LookRotation(finalDir, Vector3.up);
 
             OnJoiningTheQueue?.Invoke();
             _customer.InvokeFunctionToInvokeThisOnReachingTheQueuePosition();
