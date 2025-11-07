@@ -26,6 +26,11 @@ namespace DATA
             mainMoney += amount;
         }
 
+        public void SetMainMoney(int amount)
+        {
+            mainMoney = amount;
+        }   
+
  
         public int mainMoney;
         [Space(10)]
